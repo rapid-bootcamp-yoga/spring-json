@@ -1,8 +1,10 @@
 package com.springjson.model;
 
+import com.springjson.entity.AddressEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
@@ -15,5 +17,9 @@ public class AddressModel {
     private String district;
     private String city;
     private String province;
+
+    public AddressModel(AddressEntity entity) {
+        BeanUtils.copyProperties(entity, this);
+    }
 
 }

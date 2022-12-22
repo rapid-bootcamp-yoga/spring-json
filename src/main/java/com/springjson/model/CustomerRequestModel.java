@@ -9,6 +9,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerRequest {
+public class CustomerRequestModel {
     private List<CustomerModel> customers;
+
+
 }
