@@ -1,8 +1,10 @@
 package com.springjson.model;
 
+import com.springjson.entity.CustomerEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.format.annotation.DateTimeFormat;
 
 
@@ -29,5 +31,7 @@ public class CustomerModel {
     private List<SchoolsModel> schools;
 
 
-
+    public CustomerModel(CustomerEntity entity) {
+        BeanUtils.copyProperties(entity, this);
+    }
 }

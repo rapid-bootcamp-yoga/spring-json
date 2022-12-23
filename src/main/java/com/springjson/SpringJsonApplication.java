@@ -9,5 +9,4 @@ public class SpringJsonApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringJsonApplication.class, args);
 	}
-
 }

@@ -46,6 +46,12 @@ public class CustomerEntity {
         BeanUtils.copyProperties(model , this);
     }
 
+    public CustomerEntity(Long id, String fullName, String gender) {
+        this.id = id;
+        this.fullName = fullName;
+        this.gender = gender;
+    }
+
     //nambah address
     public void addDetailAddress(AddressEntity detailaddressEntity){
         this.address.add(detailaddressEntity);

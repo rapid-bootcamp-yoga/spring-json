@@ -21,8 +21,6 @@ public class AddressEntity {
     private Long id;
     @Column(name = "address_name", length = 100, nullable = false)
     private String name;
-    @Column(name = "address_address", nullable = false)
-    private String address;
     @Column(name = "address_village", nullable = false)
     private String village;
     @Column(name = "address_district", nullable = false)

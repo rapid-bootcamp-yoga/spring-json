@@ -23,7 +23,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> saveCustomer(@RequestBody CustomerRequestModel request){
+    public ResponseEntity<Object> save(@RequestBody CustomerRequestModel request){
         return ResponseEntity.ok().body(
                 service.saveAll(request)
         );

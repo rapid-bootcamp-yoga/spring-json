@@ -3,7 +3,6 @@ package com.springjson.service;
 import com.springjson.model.CustomerModel;
 import com.springjson.model.CustomerRequestModel;
 import com.springjson.model.CustomerResponse;
-import com.springjson.repository.CustomerRequestRepo;
 
 import java.util.List;
 import java.util.Optional;
