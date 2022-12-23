@@ -1,11 +1,13 @@
 package com.springjson.entity;
 
 import com.springjson.model.AddressModel;
+import com.springjson.model.CustomerModel;
 import com.springjson.model.SchoolsModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.beans.BeanUtils;
+
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,16 +21,6 @@ import java.util.Set;
 @Entity
 @Table(name = "customers_tab")
 public class CustomerEntity {
-//    private Long id;
-//    private String fullName;
-//    private List<AddressModel> address;
-//    private String gender;
-//
-//    @Temporal(TemporalType.DATE)
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
-//    private Date dateOfBirth;
-//    private String placeOfBirth;
-//    private List<SchoolsModel> schools;
     @Id
     @TableGenerator(name = "customers_id_generator", table = "json_tab",
             pkColumnName = "gen_name", valueColumnName = "gen_value",
@@ -50,4 +42,20 @@ public class CustomerEntity {
     @OneToMany(mappedBy = "customers")
     private Set<SchoolsEntity> schools = new HashSet<>();
 
+    public CustomerEntity(CustomerModel model){
+        BeanUtils.copyProperties(model , this);
+    }
+
+    //nambah address
+    public void addDetailAddress(AddressEntity detailaddressEntity){
+        this.address.add(detailaddressEntity);
+        detailaddressEntity.setCustomers(this);
+    }
+
+    public void addDetailListAddress(List<AddressModel> detailsAddress){
+        for(AddressModel item: detailsAddress){
+            AddressEntity detailsAddressEntity = new AddressEntity(item);
+            addDetailAddress(detailsAddressEntity);
+        }
+    }
 }
