@@ -1,5 +1,6 @@
 package com.springjson.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springjson.model.SchoolsModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,11 +29,12 @@ public class SchoolsEntity {
     @Column(name = "schools_level", nullable = false)
     private String level;
 
-    @Column(name = "customers_id", nullable = false)
+    @Column(name = "customers_id",insertable = false, updatable = false )
     private Long customersId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "customers_id", insertable = false, updatable = false)
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "customers_id", nullable = false )
     private CustomerEntity customers;
 
     public SchoolsEntity(SchoolsModel model){

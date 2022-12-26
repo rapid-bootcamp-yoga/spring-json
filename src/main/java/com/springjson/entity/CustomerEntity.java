@@ -1,5 +1,6 @@
 package com.springjson.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.springjson.model.AddressModel;
 import com.springjson.model.CustomerModel;
 import com.springjson.model.SchoolsModel;
@@ -7,13 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,16 +30,20 @@ public class CustomerEntity {
     private String fullName;
     @Column(name = "customer_gender", nullable = false)
     private String gender;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "customer_dateOfBirth", nullable = false)
     private Date dateOfBirth;
-    @Column(name = "customer_placeOfBirth", nullable = false)
+    @Column(name = "customer_placeOfBirth")
     private String placeOfBirth;
 
-    @OneToMany(mappedBy = "customers")
-    private Set<AddressEntity> address = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "customers", cascade = CascadeType.ALL)
+    private List<AddressEntity> address = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customers")
-    private Set<SchoolsEntity> schools = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "customers", cascade = CascadeType.ALL)
+    private List<SchoolsEntity> schools = new ArrayList<>();
 
     public CustomerEntity(CustomerModel model){
         BeanUtils.copyProperties(model , this);
@@ -63,5 +66,18 @@ public class CustomerEntity {
             AddressEntity detailsAddressEntity = new AddressEntity(item);
             addDetailAddress(detailsAddressEntity);
         }
+    }
+
+    //nambah Schools
+    public void addDetailListSchools(List<SchoolsModel> detailsSchools){
+        for (SchoolsModel nameSchool: detailsSchools) {
+            SchoolsEntity detailsSchoolsEntity = new SchoolsEntity(nameSchool);
+            addSchools(detailsSchoolsEntity);
+        }
+    }
+
+    public void addSchools(SchoolsEntity detailsSchoolsEntity ){
+        this.schools.add(detailsSchoolsEntity);
+        detailsSchoolsEntity.setCustomers(this);
     }
 }

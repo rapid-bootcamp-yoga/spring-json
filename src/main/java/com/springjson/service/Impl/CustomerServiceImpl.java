@@ -9,6 +9,7 @@ import com.springjson.repository.CustomerRepo;
 import com.springjson.repository.SchoolsRepo;
 import com.springjson.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerRepo customerRepo;
 
     @Autowired
+
     public CustomerServiceImpl(CustomerRepo customerRepo) {
         this.customerRepo = customerRepo;
     }
@@ -36,11 +38,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public Optional<CustomerModel> getById(Long id) {
+        if(id == 0) {
+            return Optional.empty();
+        }
+        Optional<CustomerEntity> result = this.customerRepo.findById(id);
+        return result.map(CustomerModel::new);
+    }
+
+    @Override
     public CustomerResponse saveAll(CustomerRequestModel requestModel) {
         if(requestModel.getCustomers().isEmpty()) {
             return new CustomerResponse();
         }
         CustomerResponse responseCustomer = new CustomerResponse();
+
         int testSuccess = 0;
         int testFailed = 0;
         List<CustomerModel> customerModels = new ArrayList<>();
@@ -56,24 +68,13 @@ public class CustomerServiceImpl implements CustomerService {
                 testFailed++;
             }
         }
-//        responseCustomer.setDataCust(customerModels);
-//        responseCustomer.setSuccessSave(testSuccess);
-//        responseCustomer.setFailedSave(testFailed);
-//        return responseCustomer;
-
-        return new CustomerResponse(customerModels, testSuccess, testFailed);
-
-
+        responseCustomer.setDataCust(customerModels);
+        responseCustomer.setSuccessSave(testSuccess);
+        responseCustomer.setFailedSave(testFailed);
+        return responseCustomer;
+        //return new CustomerResponse(customerModels, testSuccess, testFailed);
     }
 
-    @Override
-    public Optional<CustomerModel> getById(Long id) {
-        if(id == 0) {
-            return Optional.empty();
-        }
-        Optional<CustomerEntity> result = this.customerRepo.findById(id);
-        return result.map(CustomerModel::new);
-    }
 
     @Override
     public Optional<CustomerModel> save(CustomerModel model) {
@@ -81,6 +82,14 @@ public class CustomerServiceImpl implements CustomerService {
             return Optional.empty();
         }
         CustomerEntity entity = new CustomerEntity(model);
+        if(!model.getSchools().isEmpty()){
+            entity.addDetailListSchools(model.getSchools());
+        }
+
+        if(!model.getAddress().isEmpty()){
+            entity.addDetailListAddress(model.getAddress());
+        }
+
         try {
             this.customerRepo.save(entity);
             return Optional.of(new CustomerModel(entity));
@@ -88,25 +97,34 @@ public class CustomerServiceImpl implements CustomerService {
             log.error("Customer save gagal, error : {}", error.getMessage());
             return Optional.empty();
         }
-
-
     }
 
     @Override
     public Optional<CustomerModel> update(Long id, CustomerModel model) {
-        return Optional.empty();
+        if(id == 0) {
+            return Optional.empty();
+        }
+        CustomerEntity result = this.customerRepo.findById(id).orElse(null);
+        if(result == null){
+            return Optional.empty();
+        }
+        BeanUtils.copyProperties(model, result);
+        try{
+            this.customerRepo.save(result);
+            return Optional.of(new CustomerModel(result));
+        } catch (Exception error){
+            log.error("Customer update gagal. Error :", error.getMessage());
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<CustomerModel> delete(Long id) {
+        if(id == 0){
+            return Optional.empty();
+        }
+        this.customerRepo.findById(id).orElse(null);
         return Optional.empty();
     }
 
-//    @Override
-//    public Optional<CustomerModel> save(CustomerModel model){
-//        if(model == null || model.addDetailList().isEmpty()) {
-//            return Optional.empty();
-//        }
-//
-//    }
 }
